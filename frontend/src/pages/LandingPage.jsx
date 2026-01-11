@@ -36,7 +36,7 @@ export default function LandingPage() {
                 <div>
                     <h1><span style={{ color: "#1cb3c7" }}>Connect</span> with your loved Ones</h1>
 
-                    <p>Cover a distance by <span style={{ color: "#1cb3c7" }}>SyncMeet</span></p>
+                    <p>Bringing people closer, virtually with <span style={{ color: "#1cb3c7" }}>SyncMeet</span></p>
                     <div role='button'>
                         <Link to={"/auth"}>Get Started</Link>
                     </div>
