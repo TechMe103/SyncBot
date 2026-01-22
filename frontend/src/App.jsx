@@ -2,9 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import LandingPage from "./pages/landingPage.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Login from "./pages/login.jsx";
-import Signup from "./pages/signup.jsx";
-
+// import Authentication from './pages/authenticationPage.jsx';
 
 
 function App() {
@@ -14,8 +12,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<LandingPage />}/>
-        <Route path="/login" element={<Login/>} />
-        <Route path="/signup" element={<Signup/>} />
+        {/* <Route path="/auth" element={<Authentication/>} />
+        <Route path="/auth" element={<Authentication/>} /> */}
       </Routes>
     </Router>
   )
