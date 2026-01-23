@@ -1,45 +1,38 @@
-import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
+dotenv.config();
 
-//createserver is userd to create http server -> to connect socket.io with express
+//to check env variables are loaded
+console.log("EMAIL:", process.env.EMAIL_USER);
+console.log("PASS:", process.env.EMAIL_PASS ? "LOADED" : "MISSING");
+
+
+import express from "express";
+import connectDB from "./config/db.js";
 import { createServer } from "node:http";
-import http from "http";
-import { Server } from "socket.io";
 import cors from "cors";
 import connectToSocket from "./controllers/socketManager.js";
 import userRoutes from "./routes/userRoutes.js";
 
-
-dotenv.config();
 const app = express();
 const server = createServer(app);
-// const io = new Server(server);
-const io = connectToSocket(server);
+connectToSocket(server);
 
-
-app.set("port" , process.env.PORT || 8000);
+app.set("port", process.env.PORT || 8000);
 app.use(cors());
-app.use(express.json({limit: "50kb"}));
-app.use(express.urlencoded({ extended: true , limit: "50kb"}));
+app.use(express.json({ limit: "50kb" }));
+app.use(express.urlencoded({ extended: true, limit: "50kb" }));
 
-
-//Routes
-app.use("/api/v1/users" , userRoutes);
+app.use("/api/v1/users", userRoutes);
 
 app.get("/", (req, res) => {
   res.send("SyncMeet Backend is running");
 });
 
 const start = async () => {
-
-    await connectDB();
-
-    server.listen(app.get("port") , () => {
-        console.log(`Server is running on port ${app.get("port")}`);
-    });
-
+  await connectDB();
+  server.listen(app.get("port"), () => {
+    console.log(`Server is running on port ${app.get("port")}`);
+  });
 };
 
 start();
