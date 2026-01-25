@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate , Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext.jsx';
+
 
 import {
   Box,
@@ -17,16 +20,23 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
   });
 
   const navigate = useNavigate();
+  const { handleLogin } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async(e) => {
+    //logic
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle login logic here
+    try {
+      await handleLogin(formData.username , formData.password);
+
+    } catch(err) {
+      alert("Login Failed. Please check your credentials.");
+    }
+
   };
 
   const handleChange = (field) => (e) => {

@@ -1,38 +1,47 @@
+import { Email } from "@mui/icons-material";
 import axios from "axios";
 import httpStatus from "http-status";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import server from "../environment";
+// import server from "../environment";
 
 
-export const AuthContext = createContext({});
+export const AuthContext = createContext(null);
 
 const client = axios.create({
-    baseURL: `${server}/api/v1/users`
-})
+    // baseURL: `${server}/api/v1/users` ,
+    baseURL: "http://localhost:8000/api/v1/users"
+});
 
 
 export const AuthProvider = ({ children }) => {
+    
+    const navigate = useNavigate();
 
-    const authContext = useContext(AuthContext);
+    const [userData, setUserData] = useState(null);
+    const [loading , setLoading] = useState(true);
 
 
-    const [userData, setUserData] = useState(authContext);
+    //load user from token on refresh or render
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if(token) {
+            setUserData({ token });
+        }
+        setLoading(false);
+    } , []);
 
 
-    const router = useNavigate();
-
-    const handleRegister = async (name, username, password) => {
+    const handleRegister = async (username, email ) => {
         try {
-            let request = await client.post("/register", {
-                name: name,
-                username: username,
-                password: password
-            })
+            const res = await client.post("/register" ,{
+                username , 
+                email , 
+            });
 
-
-            if (request.status === httpStatus.CREATED) {
-                return request.data.message;
+            if (res.status === httpStatus.CREATED) {
+                navigate('/auth/login');
+                return res.data.message;
             }
         } catch (err) {
             throw err;
@@ -51,42 +60,48 @@ export const AuthProvider = ({ children }) => {
 
             if (request.status === httpStatus.OK) {
                 localStorage.setItem("token", request.data.token);
-                router("/home")
+                setUserData({ token: request.data.token });
+                navigate("/home");
             }
         } catch (err) {
             throw err;
         }
-    }
+    };
 
+    //logout
+    const logout = () => {
+        localStorage.removeItem("token");
+        setUserData(null);
+        navigate("/auth/login");
+    };
+
+    //get history of user
     const getHistoryOfUser = async () => {
-        try {
-            let request = await client.get("/get_all_activity", {
-                params: {
-                    token: localStorage.getItem("token")
-                }
-            });
-            return request.data
-        } catch
-         (err) {
-            throw err;
-        }
-    }
+        const token = localStorage.getItem("token");
+        const res = await client.get("/getAllActivities" , {
+            headers: {
+                Authorization: `Bearer ${token}`
+            } , 
+        });
+        return res.data;
+    };
 
+    //add to user history
     const addToUserHistory = async (meetingCode) => {
-        try {
-            let request = await client.post("/add_to_activity", {
-                token: localStorage.getItem("token"),
-                meeting_code: meetingCode
-            });
-            return request
-        } catch (e) {
-            throw e;
-        }
-    }
+        const token = localStorage.getItem("token");
+        return client.post("/addToActivity" , {
+            meetingCode: meetingCode
+        } , 
+    {
+            headers: {
+                Authorization: `Bearer ${token}`
+            } , 
+        });
+    };
 
 
     const data = {
-        userData, setUserData, addToUserHistory, getHistoryOfUser, handleRegister, handleLogin
+        userData, loading , logout, addToUserHistory, getHistoryOfUser, handleRegister, handleLogin
     }
 
     return (

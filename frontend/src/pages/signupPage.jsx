@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate , Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 import {
   Box,
@@ -11,23 +13,30 @@ import {
   InputAdornment,
   IconButton,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Person, Email } from '@mui/icons-material';
+import { Person, Email } from '@mui/icons-material';
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: '',
   });
 
   const navigate = useNavigate();
+  const { handleRegister } = useContext(AuthContext);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle signup logic here
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await handleRegister(
+      formData.username,
+      formData.email,
+      formData.password
+    );
+  } catch (err) {
+    alert("Registration failed");
+  }
+};
 
   const handleChange = (field) => (e) => {
     setFormData({ ...formData, [field]: e.target.value });

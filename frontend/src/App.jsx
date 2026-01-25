@@ -10,14 +10,12 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <Router>
       <Routes>
         <Route path="/" element={<LandingPage />}/>
         <Route path="/auth/register" element={<Signup/>} />
         <Route path="/auth/login" element={<LoginPage/>} />
       </Routes>
-    </Router>
-  )
+  );
 }
 
 export default App
