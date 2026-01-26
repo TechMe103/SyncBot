@@ -2,21 +2,24 @@ import { Schema } from 'mongoose';
 
 const meetingSchema = new Schema({
 
-    user_id : {
-        type : String,
+    user : {
+        type : Schema.Types.ObjectId,
+        ref : "User" , 
+        required : true
     } ,
 
     meetingCode : {
         type : String,
-        required : true
+        required : true , 
+        trim : true
     } , 
 
     date :{
         type : Date,
-        default : Date.now ,
-        required : true    
+        default : Date.now 
+        // required : true    
     }
-});
+} , { timestamps : true });
 
 const Meeting = mongoose.model('Meeting' , meetingSchema);
 
