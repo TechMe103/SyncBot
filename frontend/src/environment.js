@@ -1,3 +1,3 @@
-const server = "http://localhost:8000"; // your backend URL
+const server = "http://localhost:8000"; // backend URL
 
 export default server;
